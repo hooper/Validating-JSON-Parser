@@ -40,43 +40,43 @@ implementations, the bulk of the time is still spent in the call to eval rather
 than in the validation. */
 
 function json_parse(str) {
-	// Use the native JSON parser if available
-	if (window.JSON && window.JSON.parse)
-		try       { return window.JSON.parse(str) }
-		catch (x) { return null }
+    // Use the native JSON parser if available
+    if (window.JSON && window.JSON.parse)
+        try       { return window.JSON.parse(str) }
+        catch (x) { return null }
 
-	// Make a copy of the input string to destroy during validation
-	var test = str
+    // Make a copy of the input string to destroy during validation
+    var test = str
 
-	// Reduce string literals to string atoms (S)
-	test = test.replace(/"([^"\\]|\\["\\\/bfnrt]|\\u\d{4})*"/g, "S");console.log(test)
+    // Reduce string literals to string atoms (S)
+    test = test.replace(/"([^"\\]|\\["\\\/bfnrt]|\\u\d{4})*"/g, "S")
 
-	// Reduce number literals to generic atoms (A)
-	test = test.replace(/(-?[1-9]*\d)(\.\d+)?([eE][+-]?\d+)?/g, "A");console.log(test)
+    // Reduce number literals to generic atoms (A)
+    test = test.replace(/(-?[1-9]*\d)(\.\d+)?([eE][+-]?\d+)?/g, "A")
 
-	// Reduce other literals to generic atoms
-	test = test.replace(/(true|false|null)/g, "A");console.log(test)
+    // Reduce other literals to generic atoms
+    test = test.replace(/(true|false|null)/g, "A")
 
-	// Any remaining whitespace is unimportant
-	test = test.replace(/\s/g, "");console.log(test)
+    // Any remaining whitespace is unimportant
+    test = test.replace(/\s/g, "")
 
-	// Reduce the inner-most objects and arrays until none are left
-	var prev
-	do {
-		// Remember test so we can tell if changes occurred
-		prev = test
-	
-		// Reduce flat arrays to container atoms (C)
-		test = test.replace(/\[([SAC](,[SAC])*)?\]/g, "C");console.log(test)
-	
-		// Reduce flat objects to container atoms
-		test = test.replace(/\{(S:[SAC](,S:[SAC])*)?\}/g, "C");console.log(test)
-	}
-	while (prev != test
-		&& test != "C") // Short circuit if we're already reduced
+    // Reduce the inner-most objects and arrays until none are left
+    var prev
+    do {
+        // Remember test so we can tell if changes occurred
+        prev = test
+    
+        // Reduce flat arrays to container atoms (C)
+        test = test.replace(/\[([SAC](,[SAC])*)?\]/g, "C")
+    
+        // Reduce flat objects to container atoms
+        test = test.replace(/\{(S:[SAC](,S:[SAC])*)?\}/g, "C")
+    }
+    while (prev != test
+        && test != "C") // Short circuit if we're already reduced
 
-	// If we reduced successfully, the string matched the JSON grammar, and
-	// we can evaluate it safely. Otherwise return null for failure.
-	return test == "C" ? eval("("+str+")") : null
+    // If we reduced successfully, the string matched the JSON grammar, and
+    // we can evaluate it safely. Otherwise return null for failure.
+    return test == "C" ? eval("("+str+")") : null
 }
 
