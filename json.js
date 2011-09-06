@@ -70,7 +70,7 @@ function json_parse(str) {
         test = test.replace(/\[([SAC](,[SAC])*)?\]/g, "C")
     
         // Reduce flat objects to container atoms
-        test = test.replace(/\{(S:[SAC](,S:[SAC])*)?\}/g, "C")
+        test = test.replace(/{(S:[SAC](,S:[SAC])*)?}/g, "C")
     }
     while (prev != test
         && test != "C") // Short circuit if we're already reduced
